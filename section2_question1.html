@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Section 2 Question 1</title>
+</head>
+<body>
+    <div class="container">
+        <div class="section" id="box1"></div>
+        <div class="section" id="box2"></div>
+        <div class="section" id="box3"></div>
+    </div>
+</body>
+<style>
+body {
+    margin:0;
+    padding:0;
+}
+.container {
+    display: grid;
+    grid-template-columns: 200px auto 300px;
+    color: black;
+    border-color: black;
+    height: 100vh;
+}
+.section{
+    margin: 0;
+    padding: 0;
+    border: 1px solid black;
+}
+#box2{
+    min-width: 100px;
+}
+@media screen and (max-width: 600px) { 
+            body { 
+                white-space:normal; 
+            }
+        }
+</style>
+<script>
+
+    let box1 = document.getElementById("box1");
+    let box2 = document.getElementById("box2");
+
+    let inputNum = document.createElement("INPUT");
+    inputNum.id = "inputNum";
+    inputNum.style.cssText = "padding:0px;margin:0px";
+    inputNum.addEventListener("input",(e)=>{
+        let regex =  /^[0-9-.]*$/;
+        let valid = regex.test(e.target.value);
+        if(!valid){
+            e.preventDefault();
+            inputNum.value = "";
+        }
+    });
+
+    inputNum.addEventListener("blur",(e)=>{
+
+            let value = e.target.value;
+
+            if((value === "") || (value === undefined)){
+                return
+            }
+
+            if(value.indexOf("0") == 0){
+                e.preventDefault();
+                inputNum.value = "1";
+                return
+            }
+
+            if((value.indexOf("-") > 0) || (value.split("-").length > 2)){
+                e.preventDefault();
+                inputNum.value = "";
+                return
+            }
+
+            if((value.indexOf("-") == 0) && (value.split("-").length == 2)){
+                e.preventDefault();
+                inputNum.value = "1";
+                return
+            }
+
+            if((value.indexOf(".") == 0) && (value.split(".").length == 2)){
+                e.preventDefault();
+                inputNum.value = "1";
+                return
+            }
+
+            if(value.split(".").length > 2){
+                e.preventDefault();
+                inputNum.value = "";
+                return
+            }
+
+
+            let isInterger = ((value.indexOf(".") > 0) && (value.split(".").length == 2))? false : true;
+            if(!isInterger){
+                inputNum.value = Math.round(parseFloat(value));
+            }
+
+            calculate();
+   
+    })
+    box1.appendChild(inputNum);
+
+    let inputOperator = document.createElement("SELECT");
+    inputOperator.id = "inputOperator";
+    inputOperator.style.cssText = "width:100px;padding:0px;margin:0px";
+
+    let opt1 = document.createElement("option");
+    opt1.setAttribute("value", "isPrime");
+    let nod1 = document.createTextNode("isPrime"); 
+    opt1.appendChild(nod1);
+
+    let opt2 = document.createElement("option");
+    opt2.setAttribute("value", "isFibonacci");
+    let nod2 = document.createTextNode("isFibonacci"); 
+    opt2.appendChild(nod2);
+
+    inputOperator.appendChild(opt1);
+    inputOperator.appendChild(opt2);
+
+    inputOperator.addEventListener("change",(e)=>{
+        if(e.target.value){
+            calculate();
+        }
+    })
+
+    box2.appendChild(inputOperator);
+
+    function calculate(){
+        let value = document.getElementById("inputNum").value;
+        let operator = document.getElementById("inputOperator").value;
+        if(value && operator){
+            if(operator === 'isPrime'){
+                checkPrime(value);
+            }else{
+                checkFibonacci(value)
+            }
+        }
+    }
+
+    function checkPrime(num){
+
+        let result = true;
+
+        for(let i = 2; i < num; i++){
+            if(num % i === 0) {
+                result = false;
+                break;
+            }
+        }
+
+        let box3 = document.getElementById("box3");
+        let text = document.createElement("SPAN");
+
+        if(box3.childElementCount > 0){
+            box3.removeChild(box3.childNodes[0]);
+        }
+
+        if(result === true){
+            result = num > 1;
+        }
+        
+        text.innerHTML = result;
+
+        box3.appendChild(text);
+
+    }
+
+    function checkFibonacci(num){
+
+        let n1 = 5*num*num + 4;
+
+        let n2 = 5*num*num - 4;
+
+        let s1 = parseInt(Math.sqrt(n1)); 
+
+        let s2 = parseInt(Math.sqrt(n2));
+
+        let box3 = document.getElementById("box3");
+        let text = document.createElement("SPAN");
+
+        if(box3.childElementCount > 0){
+            box3.removeChild(box3.childNodes[0]);
+        }
+
+        text.innerHTML = ((s1*s1 === n1) || (s2*s2 === n2));
+
+        box3.appendChild(text); 
+
+    }
+
+</script>
+</html>
